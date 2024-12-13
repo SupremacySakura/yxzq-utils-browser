@@ -1,0 +1,45 @@
+{
+  "name": "yxzq-utils-browser",
+  "version": "1.0.0",
+  "main": "dist-cjs/index.js",
+  "module": "dist-esm/index.js",
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/",
+    "dist-cjs/",
+    "dist-esm/"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist-esm/index.js",
+      "require": "./dist-cjs/index.js",
+      "types":"./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build": "npm run build:cjs && npm run build:esm"
+  },
+  "keywords": [
+    "yxzq",
+    "yxzq-utils",
+    "js",
+    "utils",
+    "es",
+    "ts",
+    "CommonJS",
+    "browser",
+    "front-end"
+  ],
+  "author": "yxzq",
+  "license": "ISC",
+  "description": "yxzq-utils-browser",
+  "dependencies": {
+    "axios": "^1.7.9"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
