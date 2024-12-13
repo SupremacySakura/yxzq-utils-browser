@@ -5,8 +5,8 @@
         "rootDir": "./src", // 源码根目录
         "sourceMap": true, // 生成 source map 文件
         "target": "es2020", // 编译目标版本（ES2020 或更高）
-        "module": "nodenext",
-        "moduleResolution": "nodenext", // 使用 nodenext 模块解析策略
+        "module": "ESNext",
+        "moduleResolution": "node", // 使用 nodenext 模块解析策略
         "strict": true, // 启用所有严格的类型检查选项
         "esModuleInterop": true, // 允许从 ES 模块中引入 CommonJS 模块
         "skipLibCheck": true, // 跳过库文件的类型检查以加快编译速度
