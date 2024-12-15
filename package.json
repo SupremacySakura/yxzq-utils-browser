@@ -1,6 +1,6 @@
 {
   "name": "yxzq-utils-browser",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "main": "dist/dist-cjs/index.js",
   "module": "dist/dist-esm/index.js",
   "type": "module",
