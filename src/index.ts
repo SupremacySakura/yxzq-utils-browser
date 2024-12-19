@@ -1,5 +1,4 @@
 import { checkIfInstanceOf } from "./utils/index.js"
-import axios from 'axios'
 interface UploadConfig {
     folderName?: string
     fileName?: string
@@ -46,12 +45,11 @@ const uploadResource = async (file: File | Blob, config: UploadConfig = {}):Prom
     formData.append('useDate', useDate)
     formData.append('ext', ext)
     try{
-        const response = await axios.post(wholeUrl, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
+        const response = await fetch(wholeUrl, {
+            method: 'POST',
+            body: formData
         })
-        return response.data
+        return response.json()
     }catch(err){
         return {
             message: 'An error occurred during the request',

@@ -1,5 +1,4 @@
 import typescript from 'rollup-plugin-typescript2'
-
 export default [
     // ESM 输出配置
     {
@@ -8,9 +7,11 @@ export default [
             file: 'dist/dist-esm/index.js',  // 输出文件
             format: 'esm',  // 输出格式为 ESM
         },
-        plugins: [typescript({
-            useTsconfigDeclarationDir: true
-        })],
+        plugins: [
+            typescript({
+                useTsconfigDeclarationDir: true
+            })
+        ],
     },
 
     // CJS 输出配置
@@ -21,8 +22,24 @@ export default [
             format: 'cjs',  // 输出格式为 CJS
             entryFileNames: '[name].cjs',  // 使用 .cjs 后缀
         },
-        plugins: [typescript({
-            useTsconfigDeclarationDir: true
-        })],
+        plugins: [
+            typescript({
+                useTsconfigDeclarationDir: true
+            })
+        ],
+    },
+    // UMD 输出配置
+    {
+        input: 'src/index.ts',
+        output: {
+            file: 'dist/dist-umd/index.js',
+            format: 'umd',
+            name: 'yxzqUtils',
+        },
+        plugins: [
+            typescript({
+                useTsconfigDeclarationDir: true
+            })
+        ],
     },
 ]

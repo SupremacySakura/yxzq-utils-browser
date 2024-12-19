@@ -1,10 +1,12 @@
-# yxzq-utils
+# yxzq-utils-browser
 
-`yxzq-utils` 是一个工具库，支持在前端读取文件并直接上传，方便处理静态资源管理。
+`yxzq-utils-browser` 是一个工具库，支持在前端读取文件并直接上传，方便处理静态资源管理。
 
 ## 目录
+
 - [安装](#安装)
 - [使用](#使用)
+  - [原生js使用示例](#原生js使用示例)
   - [JavaScript 示例](#javascript-示例)
   - [TypeScript 示例](#typescript-示例)
   - [CommonJS 支持](#commonjs-支持)
@@ -14,13 +16,44 @@
   - [搭配工具](#搭配工具)
 
 ## 安装
+
 ```bash
-npm install yxzq-utils
+npm install yxzq-utils-browser
 ```
 
 ## 使用
 
+### 原生js使用示例
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>example</title>
+</head>
+
+<body>
+    <input type="file" class="file-input">
+    <script type="module" src="your-path-to-node_modules/yxzq-utils-browser/dist/dist-umd/index.js"></script>
+    <script type="module">
+        const input = document.querySelector('.file-input')
+        input.addEventListener('change', (e) => {
+            const file = e.target.files[0]
+            yxzqUtils.uploadResource(file).then(res => {
+                console.log(res)
+            })
+        })
+        
+    </script>
+</body>
+
+</html>
+```
 ### JavaScript 示例
+
 ```javascript
 import { uploadResource } from 'yxzq-utils';
 
@@ -41,6 +74,7 @@ up();
 ```
 
 ### TypeScript 示例
+
 ```typescript
 import { uploadResource } from 'yxzq-utils';
 
@@ -62,11 +96,13 @@ up();
 ```
 
 ### CommonJS 支持
+
 ```javascript
 const { uploadResource } = require('yxzq-utils');
 ```
 
 ## 返回值
+
 调用 `uploadResource` 会返回一个 Promise，解析后的结果如下：
 ```javascript
 {
@@ -78,15 +114,18 @@ const { uploadResource } = require('yxzq-utils');
 ```
 
 ## 使用介绍
+
 - 当前工具支持以下 2 种文件类型：
   - **File**
   - **Blob**
 - 可以上传图片以及其他静态资源。
 
 ### 后端工具
+
 如果需要在 Node.js 后端环境中使用，请参考另一个工具 [yxzq-utils-node](https://www.npmjs.com/package/yxzq-utils-node)。
 
 ### 搭配工具
+
 使用此工具时，可以结合作者的另一个工具 [resource-storage](https://github.com/SupremacySakura/resource-storage)。
 
 ---
