@@ -1,4 +1,4 @@
-import { checkIfInstanceOf } from "./utils/index.js"
+import { checkIfInstanceOf } from "./utils/index"
 interface UploadConfig {
     folderName?: string
     fileName?: string
@@ -12,7 +12,17 @@ interface UploadResult {
     filePath: string | null
     code: number
 }
-const uploadResource = async (file: File | Blob, config: UploadConfig = {}):Promise<UploadResult> => {
+interface GetFilePathConfig {
+    url?: string
+    extNameConfig?: 'all' | 'no' | Array<string>
+}
+interface GetFilePathResult {
+    message: string
+    files: Array<string>
+    code: number
+    err?: any
+}
+const uploadResource = async (file: File | Blob, config: UploadConfig = {}): Promise<UploadResult> => {
     if (!file) {
         return {
             message: 'file is required',
@@ -44,13 +54,13 @@ const uploadResource = async (file: File | Blob, config: UploadConfig = {}):Prom
     formData.append('fileName', fileName)
     formData.append('useDate', useDate)
     formData.append('ext', ext)
-    try{
+    try {
         const response = await fetch(wholeUrl, {
             method: 'POST',
             body: formData
         })
         return response.json()
-    }catch(err){
+    } catch (err) {
         return {
             message: 'An error occurred during the request',
             error: err,
@@ -58,8 +68,33 @@ const uploadResource = async (file: File | Blob, config: UploadConfig = {}):Prom
             code: 400
         }
     }
-   
+
+}
+const getFilePath = async (config: GetFilePathConfig = {}): Promise<GetFilePathResult> => {
+
+    const {
+        url = 'http://localhost:3100',
+        extNameConfig = 'all'
+    } = config
+    const wholeUrl = url + '/filePath'
+    try {
+        const response = await fetch(wholeUrl, {
+            method: 'POST',
+            body: JSON.stringify({
+                extNameConfig
+            })
+        })
+        return response.json()
+    } catch (err) {
+        return {
+            message: 'An error occurred during the request',
+            files: [],
+            code: 400,
+            err: err,
+        }
+    }
 }
 export {
     uploadResource,
+    getFilePath
 }
