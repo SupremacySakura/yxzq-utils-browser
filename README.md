@@ -143,21 +143,21 @@ addCacheToAxios(instance: AxiosInstance, options: CacheOptions = {}): AxiosInsta
 
 #### 参数
 
-- instance: 需要添加缓存功能的 Axios 实例。
+- `instance`: 需要添加缓存功能的 Axios 实例。
 
-- options: 缓存配置选项。
+- `options`: 缓存配置选项。
 
-  - cacheTTL: 缓存有效时间（毫秒），默认 60 秒。
+  - `cacheTTL`: 缓存有效时间（毫秒），默认 60 秒。
 
-  - getCacheKey: 自定义缓存键生成函数。
+  - `getCacheKey`: (config: AxiosRequestConfig) => string，自定义缓存键生成函数。
 
-  - useCache: 全局是否启用缓存（可被请求级配置覆盖），默认 true。
+  - `useCache`: 全局是否启用缓存（可被请求级配置覆盖），默认 true。
 
-  - enableCacheCleanup: 是否启用定时清理过期缓存，默认 false。
+  - `enableCacheCleanup`: 是否启用定时清理过期缓存，默认 false。
 
-   - cleanupInterval: 定时清理间隔（毫秒），默认 5 分钟。
+   - `cleanupInterval`: 定时清理间隔（毫秒），默认 5 分钟。
 
-   - maxCacheSize: 最大缓存条数（超过时删除最旧条目），默认无限制。
+   - `maxCacheSize`: 最大缓存条数（超过时删除最旧条目），默认无限制。
   
 #### 返回值
  - AxiosInstance: 返回添加了缓存功能的 Axios 实例。
