@@ -3,18 +3,18 @@
 
 ## 目录
 
-- 简介
-- 安装
-- 模块格式
-- 实用函数
-  - checkIfInstanceOf
-  - debouncing
-  - throtting
-- 特别工具
-  - 搭配工具
-  - uploadResource
-  - getFilePath
-- 其他
+- [简介](#简介)
+- [安装](#安装)
+- [模块格式](#模块格式)
+- [实用函数](#实用函数)
+  - [checkIfInstanceOf](#checkifinstanceof)
+  - [debouncing](#debouncing)
+  - [throtting](#throtting)
+- [特别工具](#特别工具)
+  - [搭配工具](#搭配工具)
+  - [uploadResource](#uploadresource)
+  - [getFilePath](#getfilepath)
+- [其他](#其他)
 
 ## 简介
 
@@ -100,7 +100,7 @@ debouncing<T extends Function>(func: T, wait: number)
 #### 例子
 
 ```typescript
-const debouncedFunc = debouncing((message: string) => console.log(message), 1000);
+const debouncedFunc = yxzqUtils.debouncing((message: string) => console.log(message), 1000);
 debouncedFunc('Hello'); // 在1000毫秒后执行
 debouncedFunc('World'); // 如果在1000毫秒内再次调用，则重置计时器
 // => World
@@ -123,6 +123,14 @@ throtting<T extends Function>(func: T, limit: number)
 
 - `Function`: 返回一个新的函数，该函数实现了节流逻辑。
 
+
+#### 例子
+
+ ```typescript
+    const throttledFunc = yxzqUtils.throtting((message: string) => console.log(message), 1000);
+    throttledFunc('Hello'); // 立即执行
+    throttledFunc('World'); // 如果在1000毫秒内调用，则不会立即执行
+ ```
 ## 特别工具
 
 ### 搭配工具
@@ -161,8 +169,7 @@ uploadResource(file: File | Blob, [config]: UploadConfig)
 const up = (e: Event) => {
     const target = e.target as HTMLInputElement;
     if (target.files) {
-        const file = target.files[0];
-        uploadResource(file, {
+        yxzqUtils.uploadResource(file, {
             fileName: 'default',        // 储存的文件名，默认值为 'default'
             folderName: 'default_name', // 储存的目录位置，默认值为 'default_name'
             url: 'http://localhost:3100', // 服务器地址，默认值为 'http://localhost:3100'
@@ -171,8 +178,6 @@ const up = (e: Event) => {
         });
     }
 };
-
-up();
 ```
 
 ### getFilePath
@@ -200,7 +205,7 @@ getFilePath([config]: GetFilePathConfig)
 #### 例子
 
 ```typescript
-getFilePath({
+yxzqUtils.getFilePath({
      url: 'http://localhost:3100', // 服务器地址，默认值为 'http://localhost:3100'
      extNameConfig: 'all', // 查询文件后缀名参数，默认值为 'all'，可选值 'photo'，也可传入后缀名数组，如 ['.html', '.jpg']
 }).then(res => {
