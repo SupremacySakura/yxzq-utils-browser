@@ -1,6 +1,6 @@
 {
   "name": "yxzq-utils-browser",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "main": "dist/dist-cjs/index.js",
   "umd:main": "dist/dist-umd/index.js",
   "module": "dist/dist-esm/index.js",
@@ -14,7 +14,7 @@
       "import": "./dist/dist-esm/index.js",
       "require": "./dist/dist-cjs/index.cjs",
       "types": "./dist/types/index.d.ts",
-      "umd":"./dist/dist-umd/index.js"
+      "umd": "./dist/dist-umd/index.js"
     }
   },
   "scripts": {
@@ -35,12 +35,13 @@
   "author": "yxzq",
   "license": "ISC",
   "description": "yxzq-utils-browser",
-  "dependencies": {
-  },
   "devDependencies": {
     "rimraf": "^6.0.1",
     "rollup": "^4.28.1",
     "rollup-plugin-typescript2": "^0.36.0",
     "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "axios": "^1.8.1"
   }
 }

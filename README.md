@@ -10,11 +10,13 @@
   - [checkIfInstanceOf](#checkifinstanceof)
   - [debouncing](#debouncing)
   - [throtting](#throtting)
+  - [addCacheToAxios](#addcachetoaxios)
 - [特别工具](#特别工具)
   - [搭配工具](#搭配工具)
   - [uploadResource](#uploadresource)
   - [getFilePath](#getfilepath)
 - [其他](#其他)
+  - [后端工具](#后端工具)
 
 ## 简介
 
@@ -100,9 +102,9 @@ debouncing<T extends Function>(func: T, wait: number)
 #### 例子
 
 ```typescript
-const debouncedFunc = yxzqUtils.debouncing((message: string) => console.log(message), 1000);
-debouncedFunc('Hello'); // 在1000毫秒后执行
-debouncedFunc('World'); // 如果在1000毫秒内再次调用，则重置计时器
+const debouncedFunc = yxzqUtils.debouncing((message: string) => console.log(message), 1000)
+debouncedFunc('Hello') // 在1000毫秒后执行
+debouncedFunc('World') // 如果在1000毫秒内再次调用，则重置计时器
 // => World
 ```
 
@@ -123,14 +125,62 @@ throtting<T extends Function>(func: T, limit: number)
 
 - `Function`: 返回一个新的函数，该函数实现了节流逻辑。
 
+#### 例子
+
+```typescript
+const throttledFunc = yxzqUtils.throtting((message: string) => console.log(message), 1000)
+throttledFunc('Hello') // 立即执行
+throttledFunc('World') // 如果在1000毫秒内调用，则不会立即执行
+```
+
+### addCacheToAxios
+
+为 Axios 实例添加缓存功能，支持请求缓存、定时清理缓存、最大缓存条数限制和一键清除缓存。
+
+```typescript
+addCacheToAxios(instance: AxiosInstance, options: CacheOptions = {}): AxiosInstance
+```
+
+#### 参数
+
+- instance: 需要添加缓存功能的 Axios 实例。
+
+- options: 缓存配置选项。
+
+  - cacheTTL: 缓存有效时间（毫秒），默认 60 秒。
+
+  - getCacheKey: 自定义缓存键生成函数。
+
+  - useCache: 全局是否启用缓存（可被请求级配置覆盖），默认 true。
+
+  - enableCacheCleanup: 是否启用定时清理过期缓存，默认 false。
+
+   - cleanupInterval: 定时清理间隔（毫秒），默认 5 分钟。
+
+   - maxCacheSize: 最大缓存条数（超过时删除最旧条目），默认无限制。
+  
+#### 返回值
+ - AxiosInstance: 返回添加了缓存功能的 Axios 实例。
 
 #### 例子
 
- ```typescript
-    const throttledFunc = yxzqUtils.throtting((message: string) => console.log(message), 1000);
-    throttledFunc('Hello'); // 立即执行
-    throttledFunc('World'); // 如果在1000毫秒内调用，则不会立即执行
- ```
+```typescript
+const api = axios.create({ baseURL: 'http://example.com' })
+yxzqUtils.addCacheToAxios(api, {
+  cacheTTL: 30000,       // 缓存 30 秒
+  enableCacheCleanup: true,  // 启用定时清理
+  cleanupInterval: 60000,    // 每分钟清理一次
+  maxCacheSize: 100          // 最多保留 100 条缓存
+})
+
+api.get('/data', { useCache: true })
+  .then(response => console.log(response.data))
+  .catch(error => console.error(error))
+
+// 一键清除缓存
+api.clearCache()
+```
+
 ## 特别工具
 
 ### 搭配工具
@@ -167,7 +217,7 @@ uploadResource(file: File | Blob, [config]: UploadConfig)
 
 ```typescript
 const up = (e: Event) => {
-    const target = e.target as HTMLInputElement;
+    const target = e.target as HTMLInputElement
     if (target.files) {
         yxzqUtils.uploadResource(file, {
             fileName: 'default',        // 储存的文件名，默认值为 'default'
@@ -175,9 +225,9 @@ const up = (e: Event) => {
             url: 'http://localhost:3100', // 服务器地址，默认值为 'http://localhost:3100'
             useDate: 'yes',            // 是否使用时间戳作为文件名的一部分，默认值为 'yes'
             ext: 'jpg'                 // 文件后缀名，默认值为 'jpg'
-        });
+        })
     }
-};
+}
 ```
 
 ### getFilePath
@@ -209,8 +259,8 @@ yxzqUtils.getFilePath({
      url: 'http://localhost:3100', // 服务器地址，默认值为 'http://localhost:3100'
      extNameConfig: 'all', // 查询文件后缀名参数，默认值为 'all'，可选值 'photo'，也可传入后缀名数组，如 ['.html', '.jpg']
 }).then(res => {
-    console.log(res);
-});
+    console.log(res)
+})
 ```
 
 ## 其他
