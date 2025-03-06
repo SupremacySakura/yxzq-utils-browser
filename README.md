@@ -11,6 +11,7 @@
   - [debouncing](#debouncing)
   - [throtting](#throtting)
   - [addCacheToAxios](#addcachetoaxios)
+  - [addRetryToAxios](#addretrytoaxios)
 - [特别工具](#特别工具)
   - [搭配工具](#搭配工具)
   - [uploadResource](#uploadresource)
@@ -181,6 +182,49 @@ api.get('/data', { useCache: true })
 api.clearCache()
 ```
 
+### addRetryToAxios
+
+为 Axios 实例添加重试功能，支持请求失败自动重试、自定义重试条件和延迟时间计算。
+
+```typescript
+addRetryToAxios(instance: AxiosInstance, options: RetryOptions = {}): AxiosInstance
+```
+
+#### 参数
+
+- `instance`: 需要添加重试功能的 Axios 实例。
+
+- `options`: 重试配置选项。
+
+  - `maxRetries`: 最大重试次数，默认 3 次。
+
+  - `retryCondition`: (error: AxiosError) => boolean | Promise，自定义重试条件判断函数。默认在以下情况下重试：连接超时 (ECONNABORTED)、服务器错误 (5xx)、网络错误 (ENETUNREACH)。
+
+  - `getDelay`: (retryCount: number) => number，自定义重试延迟时间计算函数。默认使用指数退避算法：baseDelay * 2^retryCount + random(0-100)ms
+
+#### 返回值
+
+ - AxiosInstance: 返回添加了重试功能的 Axios 实例。
+
+#### 例子
+
+```typescript
+const api = axios.create({ baseURL: 'http://example.com' })
+yxzqUtils.addRetryToAxios(api, {
+  maxRetries: 3,                // 最多重试3次
+  retryCondition: (error) => error.response?.status === 500,  // 仅在服务器返回500时重试
+  getDelay: (count) => 1000 * count  // 重试延迟随重试次数线性增加
+})
+
+// 单个请求自定义重试选项
+api.get('/data', {
+  retryOptions: {
+    maxRetries: 5,
+    getDelay: (count) => 2000  // 固定延迟2秒
+  }
+})
+```
+  
 ## 特别工具
 
 ### 搭配工具

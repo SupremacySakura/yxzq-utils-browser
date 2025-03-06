@@ -1,4 +1,9 @@
-import { AxiosRequestConfig } from 'axios'
+import {
+    AxiosRequestConfig,
+    AxiosInstance,
+    InternalAxiosRequestConfig,
+    AxiosError,
+} from 'axios'
 // 声明扩展Axios类型
 declare module 'axios' {
     interface AxiosRequestConfig {
@@ -12,6 +17,17 @@ declare module 'axios' {
     interface AxiosInstance {
         clearCache: () => void
     }
+    interface InternalAxiosRequestConfig<D = any> {
+        /**
+         * 请求级重试配置
+         */
+        retryOptions?: RetryOptions;
+        /**
+         * 内部重试计数器
+         * @internal
+         */
+        __retryCount?: number;
+    }
 }
 
 // 缓存选项接口
@@ -23,6 +39,13 @@ interface CacheOptions {
     cleanupInterval?: number
     maxCacheSize?: number
 }
+interface RetryOptions {
+    maxRetries?: number;
+    retryCondition?: (error: AxiosError) => boolean | Promise<boolean>;
+    getDelay?: (retryCount: number) => number;
+}
+
 export {
-    CacheOptions
+    CacheOptions,
+    RetryOptions,
 }

@@ -1,5 +1,5 @@
-import { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
-import { CacheOptions } from './type'
+import { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig, AxiosError } from 'axios'
+import { CacheOptions, RetryOptions } from './type'
 /**
  * 检查给定的对象是否是指定构造函数的实例。
  *
@@ -10,7 +10,7 @@ import { CacheOptions } from './type'
  * 
  * @throws {TypeError} 如果classFunction不是一个函数，则返回false而不是抛出错误。
  */
-const checkIfInstanceOf = function (obj: any, classFunction: any) {
+const checkIfInstanceOf = (obj: any, classFunction: any): Boolean => {
     if (obj === null || obj === undefined || !(classFunction instanceof Function))
         return false
     return Object(obj) instanceof classFunction
@@ -204,10 +204,98 @@ const addCacheToAxios = (instance: AxiosInstance, options: CacheOptions = {}): A
 
     return instance
 }
+/**
+ * 为 Axios 实例添加重试功能，支持请求失败自动重试。
+ *
+ * @param {AxiosInstance} instance - 需要添加重试功能的 Axios 实例。
+ * @param {RetryOptions} [options={}] - 重试配置选项。
+ * @param {number} [options.maxRetries=3] - 最大重试次数，默认 3 次。
+ * @param {(error: AxiosError) => boolean | Promise<boolean>} [options.retryCondition] - 自定义重试条件判断函数。
+ *   默认在以下情况下重试：
+ *   - 连接超时 (ECONNABORTED)
+ *   - 无响应
+ *   - 服务器错误 (5xx)
+ * @param {(retryCount: number) => number} [options.getDelay] - 自定义重试延迟时间计算函数。
+ *   默认使用指数退避算法：baseDelay * 2^retryCount + random(0-100)ms
+ * @returns {AxiosInstance} - 返回添加了重试功能的 Axios 实例。
+ *
+ * @example
+ * const api = axios.create({ baseURL: 'http://example.com' })
+ * addRetryToAxios(api, {
+ *   maxRetries: 3,
+ *   retryCondition: (error) => error.response?.status === 500,
+ *   getDelay: (retryCount) => 1000 * retryCount
+ * })
+ *
+ * // 单个请求自定义重试选项
+ * api.get('/data', {
+ *   retryOptions: {
+ *     maxRetries: 5,
+ *     getDelay: (count) => 2000
+ *   }
+ * })
+ */
+const addRetryToAxios = (instance: AxiosInstance, options: RetryOptions = {}): AxiosInstance => {
+    const defaultRetryCondition = (error: AxiosError): boolean => {
+        return !!(
+            error.code === 'ECONNABORTED' ||
+            !error.response ||
+            (error.response.status >= 500 && error.response.status < 600)
+        )
+    }
 
+    const defaultGetDelay = (retryCount: number): number => {
+        const baseDelay = 1000
+        return Math.pow(2, retryCount) * baseDelay + Math.random() * 100
+    }
+    const {
+        maxRetries: globalMaxRetries = 3,
+        retryCondition: globalRetryCondition = defaultRetryCondition,
+        getDelay: globalGetDelay = defaultGetDelay
+    } = options
+
+    instance.interceptors.response.use(
+        null,
+        async (error: AxiosError) => {
+            const config = error.config as (InternalAxiosRequestConfig & { __retryCount?: number }) | undefined
+
+            if (!config) return Promise.reject(error)
+
+            // 合并配置
+            const requestRetryOptions = config.retryOptions || {}
+            const maxRetries = requestRetryOptions.maxRetries ?? globalMaxRetries
+            const retryCondition = requestRetryOptions.retryCondition ?? globalRetryCondition
+            const getDelay = requestRetryOptions.getDelay ?? globalGetDelay
+
+            const currentRetryCount = config.__retryCount || 0
+            const remainingRetries = maxRetries - currentRetryCount
+
+            const shouldRetry = await retryCondition(error)
+
+            if (shouldRetry && remainingRetries > 0) {
+                const newConfig: InternalAxiosRequestConfig = {
+                    ...config,
+                    __retryCount: currentRetryCount + 1
+                }
+
+                const delay = getDelay(newConfig.__retryCount as number)
+
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        resolve(instance(newConfig))
+                    }, delay)
+                })
+            }
+
+            return Promise.reject(error)
+        }
+    )
+    return instance
+}
 export {
     checkIfInstanceOf,
     debouncing,
     throtting,
     addCacheToAxios,
+    addRetryToAxios,
 }
