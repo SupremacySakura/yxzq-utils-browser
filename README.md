@@ -1,4 +1,4 @@
-注意，此仓库已不再维护，代码在新仓库https://github.com/SupremacySakura/yxzq-web-resource-tools中继续维护。
+注意，此仓库已不再维护，代码在新仓库https://github.com/SupremacySakura/yxzq-web-resource-tools 中继续维护。
 # yxzq-utils-browser
 
 ## 目录
